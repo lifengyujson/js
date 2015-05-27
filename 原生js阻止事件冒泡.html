@@ -1,0 +1,34 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<title>无标题文档</title>
+<style>
+#div1 {width:400px; height:300px; background:#CCC; display:none;}
+</style>
+<script>
+	
+	function show()
+	{
+		var oDiv=document.getElementById('div1');
+		
+		oDiv.style.display='block';
+		
+		var oEvent= arguments.callee.caller.arguments[0] || event; //获取事件对象
+		oEvent.cancelBubble=true;  //阻止冒泡
+	};
+	
+	document.onclick=function ()
+	{
+		var oDiv=document.getElementById('div1');
+		oDiv.style.display='none';
+	};
+</script>
+</head>
+
+<body>
+<input id="btn1" type="button" onClick="show()" value="显示" />
+<div id="div1">
+</div>
+</body>
+</html>

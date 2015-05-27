@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+</head>
+
+<body>
+<div id="div1"></div>
+
+<script>
+
+
+
+(function () {
+	var Test = function (options) {
+		this.f = 10;
+		this.options = options;
+		this.b();
+	};
+	
+	Test.prototype = {
+		b: function () {
+			console.log(this.options);
+		}
+	};
+	
+	Test.init = function (objs) {
+		var _this = this;
+		for(var i = 0; i < objs.length; i++) {		
+			new _this(objs[i]);
+		}
+	}
+	window.Test = Test;
+})();
+
+var arr = [];
+arr.push(document.getElementById('div1'));
+
+Test.init(arr);
+
+
+</script>
+
+</body>
+
+</html>

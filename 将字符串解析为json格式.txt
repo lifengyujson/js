@@ -1,0 +1,8 @@
+第一种方法： 
+var obj = jQuery.parseJSON('{"name":"John"}');
+alert( obj.name === "John" );
+
+第二种方法  
+var json = '{"name": "xiaoming","sex": "man"}';
+
+var obj = eval("("+json+")");

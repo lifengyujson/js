@@ -1,0 +1,153 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>下拉匹配</title>
+
+<script src="jquery.js"></script>
+<link href="public.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<style>
+	.downMatching { position:relative; height:32px; display:inline-block; }
+	.downFlow { position:absolute; left:0; width:100%;  max-height:150px; color:#555; overflow-x:hidden;  overflow-y:auto;  border:1px solid #ccc; display:none; background:white; }
+	.downFlow a { display:block; text-indent:8px; font-size:12px; width:100%; line-height:30px; height:30px; color:#555; text-decoration:none; }
+	.downFlow a.active, .downFlow a:hover { background:#ccc;}
+
+</style>
+<div style="width:500px; margin: 300px auto;">
+	<input type="button" id="btn1" value="变换数据1" />
+	<input type="button" id="btn2" value="变换数据2" />
+    
+    <span class="matching_wrap">
+        <span class="downMatching">
+            <input type="text" class="inp" style="width:200px;" />
+            <span class="downFlow">
+            </span>
+        </span>
+    </span>
+<script>
+	
+	$.fn.extend({
+		downMatching: function (arr) {
+			var oInp = $(this).find('.inp');
+			var oFlow = $(this).find('.downFlow');
+			var sAllHtml = '';
+			var iNum = -1;
+			
+			for(var i = 0; i < arr.length; i++) {
+				sAllHtml += '<a href="javascript:void(0)" groupid="' + arr[i][1] + '">' + arr[i][0] + '</a>';
+			}
+			
+			oFlow.html(sAllHtml);
+			
+			oFlow.css('top', oInp.outerHeight(true));
+			oInp.focus(function () {
+				oFlow.show();
+				matching();
+			}).click(function (event) {
+				event.stopPropagation();
+			});
+			
+			if(window.addEventListener) {
+				oInp[0].addEventListener('input', function () {
+					matching();
+				}, false);
+			} else {
+				oInp[0].attachEvent('onpropertychange', function () {
+					matching();
+				});
+			}
+			
+			oFlow.find('a').live('click', function() {
+				oInp.val($(this).text()).attr('groupid', $(this).attr('groupid'));
+				oFlow.hide().html('');
+			});	
+			
+			$(document).click(function () {
+				oFlow.hide().html('');
+			});
+			
+			oInp.live('keydown', function (event) {
+				var iHeight = oFlow.find('a').height();
+				if(event.keyCode == 40) {
+					iNum++;
+					if(iNum >= oFlow.find('a').length) {
+						iNum = 0;
+						oFlow.scrollTop(0);
+					}
+					if(iNum >= 5) {
+						oFlow.scrollTop((iNum - 4) * iHeight);
+					}
+					oFlow.find('a').eq(iNum).addClass('active').siblings().removeClass('active');
+				} else if (event.keyCode == 38) {
+					iNum--;
+					if(iNum < 0) {
+						iNum = oFlow.find('a').length - 1;
+					}
+					if(iNum >= 5) {
+						oFlow.scrollTop((iNum - 4) * iHeight);
+					} else if (iNum < 5) {
+						oFlow.scrollTop(0);
+					}
+					oFlow.find('a').eq(iNum).addClass('active').siblings().removeClass('active');
+				} else if (event.keyCode == 13) {
+					oInp.val(oFlow.find('a').eq(iNum).html());
+					iNum = -1;
+					oFlow.scrollTop(0).hide().html('');
+				}
+			});
+			
+			function matching() {
+				if(oInp.val() != '') {
+					var res = eval('/'+oInp.val()+'/ig');
+					var sHtml = '';
+					for(var i = 0; i < arr.length; i++) {
+						if(arr[i][0].match(res) != null) {
+							sHtml += '<a href="javascript:void(0)" groupid="' + arr[i][1] + '">' + arr[i][0] + '</a>';
+						}
+					}
+					if(sHtml == '') {
+						oFlow.hide();
+					} else {
+						oFlow.show().html(sHtml);
+					}
+				} else {
+					oFlow.show().html(sAllHtml);
+				}
+				iNum = -1;
+			}
+		}
+	});
+	
+var aMatch=[['湖北武汉',1],['长沙',2],['湖北宜昌',3],['长安',4],['北京',5],['华中师范大学',6],['华中农业大学',7],['重庆',8],['四川成都',9],['四川绵阳',10]];
+	
+$('.downMatching').downMatching(aMatch);
+
+
+
+
+
+//变换数据
+$('#btn1').click(function () {
+	aMatch = [['北方',1],['温州',2],['湖北aaa',3],['北京',4],['上海',5],['深圳',6],['武汉大学',7]];
+	
+	$('.matching_wrap').html('').html('<span class="downMatching"> <input type="text" class="inp" style="width:200px;" /> <span class="downFlow"> </span> </span>');
+	
+	$('.downMatching').downMatching(aMatch);
+});
+
+$('#btn2').click(function () {
+	aMatch = [['南方',1],['河北',2],['东北aaa',3],['山西',4],['陕西',5],['合肥',6],['赵国',7]];
+	
+	$('.matching_wrap').html('').html('<span class="downMatching"> <input type="text" class="inp" style="width:200px;" /> <span class="downFlow"> </span> </span>');
+	$('.downMatching').downMatching(aMatch);
+});
+
+	
+</script>
+
+</div>
+</body>
+</html>

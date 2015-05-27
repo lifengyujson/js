@@ -1,0 +1,41 @@
+    //空间header区域导航hover效果
+	var browser_url = window.location.href.toLowerCase();
+	var h_a = $('.spaceMenu a');
+	$.each(h_a, function(){
+		var u = $(this).attr('href').toLowerCase();
+		if(u.indexOf('center/person/index') >= 0 && browser_url.indexOf('center/person/index') >= 0){
+			$(this).addClass("cur").siblings().removeClass("cur");	
+		}
+		if(u.indexOf('post') >= 0 && browser_url.indexOf('post') >= 0){
+			$(this).addClass("cur").siblings().removeClass("cur");	
+		}
+		if(u.indexOf('cms-portal') >= 0 && browser_url.indexOf('cms-portal') >= 0){
+			$(this).addClass("cur").siblings().removeClass("cur");	
+		}			
+		if(u.indexOf('talbum') >= 0 && browser_url.indexOf('talbum') >= 0){
+			$(this).addClass("cur").siblings().removeClass("cur");	
+		}	
+		if(u.indexOf('addresslist') >= 0 && browser_url.indexOf('addresslist') >= 0){
+			$(this).addClass("cur").siblings().removeClass("cur");	
+		}						
+	});
+	
+	var h_a = $('.spModular_nav ul.nav a');	
+	$.each(h_a, function(){
+		var u = $(this).attr('href').toLowerCase();
+		if(u.indexOf('space/person/index') >= 0 && browser_url.indexOf('space/person/index') >= 0){
+			$(this).addClass("cur").siblings().removeClass("cur");	
+		}
+		if(u.indexOf('post') >= 0 && browser_url.indexOf('post') >= 0){
+			$(this).addClass("cur").siblings().removeClass("cur");	
+		}
+		if(u.indexOf('cms-portal') >= 0 && browser_url.indexOf('cms-portal') >= 0){
+			$(this).addClass("cur").siblings().removeClass("cur");	
+		}			
+		if(u.indexOf('talbum') >= 0 && browser_url.indexOf('talbum') >= 0){
+			$(this).addClass("cur").siblings().removeClass("cur");	
+		}	
+		if(u.indexOf('addresslist') >= 0 && browser_url.indexOf('addresslist') >= 0){
+			$(this).addClass("cur").siblings().removeClass("cur");	
+		}						
+	});	

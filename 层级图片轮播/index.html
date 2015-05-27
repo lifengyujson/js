@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>层级图片轮播</title>
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<script src="js/jquery.js"></script>
+<script>
+	$(function () {
+		var Focus = function (param) {
+			this.wrap = param.wrap;
+			this.prev = this.wrap.find('.prev');
+			this.next = this.wrap.find('.next');
+			this.li = this.wrap.find('li');
+			this.arr = [];
+		
+			this.init();
+		};
+		
+		Focus.prototype = {
+			'init': function () {
+				this.tab();
+			},
+			'tab': function () {
+				var _this = this;
+				//页面加载后将每个li的各种属性值存入数组
+				this.li.each(function (i) {
+					var oImg = $(this).find('img');
+					_this.arr.push([$(this).css('left'), $(this).css('top'), $(this).css('z-index'), $(this).css('opacity'), oImg.width()]);
+				});
+				console.dir(_this.arr);
+				this.prev.click(function () {
+					//将数组第一个移到最后
+					_this.arr.push(_this.arr[0]);
+					_this.arr.shift();
+					
+					//循环赋值运动
+					_this.run();	
+				});
+				this.next.click(function () {
+					//将数组最后一个移到最前
+					_this.arr.unshift(_this.arr[_this.arr.length - 1]);
+					_this.arr.pop();
+					
+					//循环赋值运动
+					_this.run();	
+				});
+			},
+			'run': function () {
+				var _this = this;
+				_this.li.each(function (j) {
+					$(this).css('z-index', _this.arr[j][2]);
+					$(this).animate({
+						'left': _this.arr[j][0],
+						'top': _this.arr[j][1],
+						'opacity': _this.arr[j][3]
+					});
+					$(this).find('img').animate({
+						'width': _this.arr[j][4]
+					});
+				});
+			}
+		}
+		
+		
+		new Focus({
+			'wrap': $('ul')
+		}); 
+	});
+</script>
+</head>
+
+<body>
+<ul>
+	<a href="javascript:void(0)"><img src="images/prev.png" class="prev" /></a>
+	<a href="javascript:void(0)"><img src="images/next.png" class="next" /></a>
+	<li class="pos_1">
+    	<a href="#"><img src="images/1.jpg" /></a>
+    </li>
+	<li class="pos_2">
+    	<a href="#"><img src="images/2.jpg" /></a>
+    </li>
+	<li class="pos_3">
+    	<a href="#"><img src="images/3.jpg" /></a>
+    </li>
+	<li class="pos_4">
+    	<a href="#"><img src="images/4.jpg" /></a>
+    </li>
+	<li class="pos_5">
+    	<a href="#"><img src="images/5.jpg" /></a>
+    </li>
+</ul>
+
+</body>
+</html>

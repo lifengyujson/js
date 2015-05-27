@@ -1,0 +1,244 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+</head>
+
+<body>
+
+<textarea id="html">
+
+//瀑布流插件
+;(function ($) {
+	$.fn.extend({
+		Waterfall: function (options) {
+			var defaults = {
+				'wrap': '.fy_waterfall',
+				'iCells': 0, //列数
+				'iWidth': 210, //每列宽度
+				'iSpace': 20, //每列间隔
+				'sUrl': 'http://www.wookmark.com/api/json/popular?callback=?', //json数据地址
+				'iPage': 0, //远程请求的参数
+				'loader': $('#water_loader'), //加载中提示
+				'li': 'li', //列表标签
+				'bigPic': '.f_img', //列表大图
+				'info': '.f_introduce', //图片介绍
+				'f_pic': '.f_pic', //大图外层标签
+				'imgLoader': '.loader', //单个图片加载标签
+				'not': $('#water_not'), //没有更多图片了
+				'head': '.f_head', //头像
+				'praise': '.praise_num', //点赞数
+				'toData': function () { return false; }, //手动设置参数,结尾 return true
+				'bResize': true, //是否开启响应式
+				'varyHeight': '[{obj: ".replyBtn", event: "click"}]',  //会产生模块高度变化的元素&触发事件,数组+json格式，可传多个json
+			}
+			var options = $.extend(defaults, options);
+			this.each(function () {
+				var This = $(this);
+				var Waterfall = function (options) {
+					this.wrap = This;
+					this.options = options;
+					this.iCells = options.iCells; //列数
+					this.iOuterWidth = options.iWidth + options.iSpace;
+					this.arrT = []; //每列最后一个元素的top值
+					this.arrL = []; //每列的left值
+					this.iPage = options.iPage; //远程请求的参数
+					this.iFlag = true; //请求数据标识符
+					this.iMaxHeight = 0; //最高的一列的高度
+					this.toData = options.toData; //手动设置其他参数
+					this.newLi = this.wrap.find(options.li); //获取列表html标签
+					this.li = this.wrap.find(options.li).not(':first'); //存储列表标签
+					this.rowLi = []; //存储每列li
+					this.varyHeight = eval("("+ options.varyHeight +")");
+					
+					this.init();
+				}
+				Waterfall.prototype = {
+					init: function () {
+						this.newLi.hide(); //隐藏html样本标签
+						this.setCell(); //设置列数
+						this.setPos(); //设置初始化left top值
+						this.getData(); //请求第一次数据
+						this.autoLoad(); //自动请求数据
+						if(options.bResize) this.resize(); //响应式
+					},
+					setCell: function () { //设置列数
+						this.iCells = Math.floor(this.wrap.width() / this.iOuterWidth); //设置列数
+					},
+					setPos: function () { //设置数据第一次加载时元素的left值和top值
+						for(var i = 0; i < this.iCells; i++) {
+							this.arrT[i] = options.iSpace;
+							this.arrL[i] = this.iOuterWidth * i;
+						}
+					},
+					getData: function () { //请求数据
+						var _this = this;
+						if(!this.iFlag) return; //上次请求数据未完成时跳出本次请求
+						this.iFlag = false;
+						this.iPage++;
+						options.loader.fadeIn('fast');
+						$.getJSON(options.sUrl, {page: this.iPage}, function (data) {
+							if(!data.length) { //判断所有数据是否请求完毕
+								options.loader.fadeOut('fast');
+								$('#water_not').fadeIn();
+								return;
+							}
+							$(data).each(function (i, json) {
+								//添加元素
+								var oLi = _this.newLi.clone(true).show();
+								_this.wrap.append(oLi);
+								
+								if(!_this.toData(options, json, oLi)) { //判断外部是否手动设置参数
+									oLi.find(options.info).html(json.title);
+									oLi.find(options.head).attr('src', json.preview).css('opacity', 0).load(function () {								$(this).animate({'opacity': 1}); });
+									oLi.find(options.praise).text(json.id);
+								}
+								
+								var oImg = oLi.find(options.bigPic); 
+								oImg[0].src = json.image;
+								var index = _this.getMin(); //获取高度最短列的index
+								var iHeight = options.iWidth * json.height / json.width; //设置图片高度
+								oImg.css({ //设置大图高度
+									'width': options.iWidth - parseInt(oLi.css('padding-left')*2),
+									'height': iHeight,
+									'opacity': 0
+								});
+								
+								oImg.load(function () { //大图加载完成后
+									$(this).animate({'opacity': 1});
+									oLi.find(options.f_pic).css('background-image', 'none');
+									oLi.find(options.imgLoader).hide();
+								});
+								
+								oLi.css({ //设置li样式
+									'position': 'absolute',
+									'width': options.iWidth,
+									'top': _this.arrT[index],
+									'left': _this.arrL[index]
+								});
+								var oImgHeight = oImg.height(); //针对奇葩360浏览器极速模式
+								_this.arrT[index] += oLi.height() + options.iSpace; //重新设置添加图片后的列高度
+								
+								if(_this.arrT[index] > _this.iMaxHeight) { //设置外层DIV的高度
+									_this.iMaxHeight =  _this.arrT[index];
+									_this.wrap.css('height', _this.iMaxHeight);
+								}
+								for(var i = 0; i < _this.varyHeight.length; i++) {
+									_this.singleRealign(oLi.find(_this.varyHeight[i].obj), _this.varyHeight[i].event, 300); //窗口变换元素
+								}
+							});
+							_this.li = _this.wrap.find(options.li).not(':first');
+							_this.iFlag = true;
+							setTimeout(function () {
+								options.loader.fadeOut('fast');
+							}, 1500);
+						});
+					},
+					getMin: function () { //得到高度最小的一列
+						var v = this.arrT[0];
+						var _index = 0; //定义最小高度列的索引值
+						
+						for(var i = 1; i < this.arrT.length; i++) {
+							if(this.arrT[i] < v) {
+								v = this.arrT[i];
+								_index = i;
+							}
+						}
+						return _index;
+					},
+					autoLoad: function () { //当浏览到底部时，自动加载数据
+						var _this = this;
+						$(window).on('scroll', function () {
+							var _index = _this.getMin();
+							var iH = $(document).scrollTop() + $(window).innerHeight();
+							if(_this.arrT[_index] < iH - _this.wrap.offset().top) {
+								_this.getData();
+							}
+						});
+					},
+					resize: function () { //响应式
+						var _this = this;
+						$(window).on('resize', function () {
+							var nowCells = _this.iCells;
+							_this.setCell();
+							if(nowCells == _this.iCells) return; //变化窗口列数和以前一样时,跳出函数
+							_this.realign(_this.li, 500);
+						});
+					},
+					realign: function (aLi, speed) { //模块重新排列
+						var _this = this;
+						this.arrT = []; //清空数组
+						this.arrL = [];
+						this.setPos(); //设置初始left值 top值
+						aLi.each(function () {
+							var _index = _this.getMin();
+							$(this).stop(true, false).animate({
+								top: _this.arrT[_index], 
+								left: _this.arrL[_index]
+							}, speed);
+							_this.arrT[_index] += $(this).height() + options.iSpace;
+						});
+					},
+					singleRealign: function (obj, ev, speed) { //单列模块重新排序
+						var _this = this;
+						obj.bind(ev, function () {
+							_this.getRowLi();
+							var iRow = $(this).parents(options.li).attr('row'); //当前列
+							_this.arrT[iRow] = options.iSpace; //清空数组
+							$(_this.rowLi[iRow]).each(function () {
+								$(this).stop(true, false).animate({
+									top: _this.arrT[iRow], 
+									left: _this.arrL[iRow]
+								}, speed);
+								_this.arrT[iRow] += $(this).height() + options.iSpace;
+							});
+						});					
+					},
+					getRowLi: function () { //将每列的li存到不同数组
+						var _this = this;
+						for(var i = 0; i < _this.arrL.length; i++) { //定义二维数组
+							_this.rowLi[i] = [];
+						}
+						_this.li.each(function () {
+							for(var i = 0; i < _this.arrL.length; i++) {
+								if(parseInt($(this).css('left')) == _this.arrL[i]) {
+									$(this).attr('row', i);
+									_this.rowLi[i].push($(this));  //将每列的li存到不同数组
+								}
+							}
+						});
+					}
+				}
+				new Waterfall(options);
+			});
+			return this;
+		}
+	});
+
+})(jQuery);
+</textarea>
+
+
+<script>
+var oDiv = document.getElementById('html');
+var str = oDiv.innerHTML;
+var res = /'\w+':/g;
+
+var arr = str.match(res);
+var targetArr = [];
+
+console.log(arr.constructor == Array);
+console.log(arr instanceof Array);
+
+for(var i = 0; i < arr.length; i++) {
+	str = str.replace(arr[i], arr[i].replace(/'/g, ''));
+}
+
+console.log(str);
+oDiv.innerHTML = str;
+
+
+</script>
+</body>
+</html>

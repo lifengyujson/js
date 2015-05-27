@@ -1,0 +1,15 @@
+ADFHOST1074="http://csdnim.allyes.com";
+ADFCID1074=31;
+ADFBID1074=1074;
+ADFLOC='CNHBXN00';
+ADFUSER1074="http://csdnim.allyes.com/main/adfclick?d=csdnim&i=z31,10054442,1074,1855&rf=&a=d6AjOlW450BTexoDAKcpaJ34C&u=";
+ALLYESID4="8osrF1s6f0Y60Z6U";
+ADFPGC="2,8,31,0,738,1074,1855,10054442";
+
+document.write("<script src=\"http://bsch.serving-sys.com/BurstingPipe/adServer.bs?cn=rsb&c=28&pli=10759689&PluID=56&w=960&h=90&ord=[timestamp]&ucm=true\"></Scr"+"ipt>\n");
+document.write("<noscript>\n");
+document.write("<script src=\"http://bsch.serving-sys.com/BurstingPipe/adServer.bs?cn=rsb&c=28&pli=10759689&PluID=56&w=960&h=90&ord=[timestamp]&ucm=true\"></Scr"+"ipt>\n");
+document.write("<noscript>\n");
+document.write("<a href=\"http://bsch.serving-sys.com/BurstingPipe/adServer.bs?cn=brd&FlightID=10759689&Page=&PluID=56&Pos=2126888655\" target=\"_blank\"><img src=\"http://bsch.serving-sys.com/BurstingPipe/adServer.bs?cn=bsr&FlightID=10759689&Page=&PluID=56&Pos=2126888655\" border=0 width=960 height=90></a>\n");
+document.write("</noscript>");
+

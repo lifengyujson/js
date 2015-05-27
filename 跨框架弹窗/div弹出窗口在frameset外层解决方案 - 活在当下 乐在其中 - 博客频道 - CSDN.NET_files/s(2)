@@ -1,0 +1,14 @@
+ADFHOST658="http://csdnim.allyes.com";
+ADFCID658=80;
+ADFBID658=658;
+ADFLOC='CNHBXN00';
+ADFUSER658="http://csdnim.allyes.com/main/adfclick?d=csdnim&i=z80,10107045,658,1603&rf=&a=dmAbOcW460BTexo74GnUdaUTm&u=";
+ALLYESID4="8osrF1s6f0Y60Z6U";
+ADFPGC="2,26,80,0,649,658,1603,10107045";
+
+document.write("<script type=\"text/javascript\">\n");
+document.write("    /*下载频道高级搜索页头文件上banner728*90 创建于 2014-07-03*/\n");
+document.write("    var cpro_id = \"u1639906\";\n");
+document.write("</Scr"+"ipt>\n");
+document.write("<script src=\"http://cpro.baidustatic.com/cpro/ui/c.js\" type=\"text/javascript\"></Scr"+"ipt>");
+

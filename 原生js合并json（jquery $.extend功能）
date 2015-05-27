@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>原生js合并json（jquery $.extend功能）</title>
+</head>
+
+<body>
+<script>
+
+function extend(des, src, override){
+    if(src instanceof Array){
+        for(var i = 0, len = src.length; i < len; i++) {
+             extend(des, src[i], override);
+		}
+    } else {
+		for( var i in src){
+			if(override || !(i in des)){
+				des[i] = src[i];
+			}
+		} 
+	}
+    return des;
+}
+var a ={a:4,b:2}
+var b ={a:3,b:4,e:5}
+var c = extend({}, [a,b], true);
+console.log(c);
+
+</script>
+</body>
+</html>

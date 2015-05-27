@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<!-- saved from url=(0078)http://blog.csdn.net/common/ad.html?t=12&containerId=ad_commend&frmId=ad_frm_2 -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>CSDN Ad</title>
+    <style type="text/css">
+        body { margin:0px; padding:0px;}
+    </style>
+     <script src="jquery.js" type="text/javascript"></script>
+</head>
+<body>
+    <div id="div1"><style type="text/css">
+ul { margin:0px; padding:0 4px 0 0; }
+ul, x:-moz-any-link, x:default { width:90%; }
+ul li { padding:3px 0px;}
+a { font-size:12px; text-decoration:none; color:#006699; }
+a:hover { color:#000; }
+</style>
+
+<ul>
+
+<li><a href="http://blog.csdn.net/dog250/article/details/40955387" target="_blank">* OpenVPN优化之-TLS握手控制通道的建立</a></li>
+
+<li><a href="http://blog.csdn.net/v_july_v/article/details/40984699" target="_blank">* 从贝叶斯方法谈到贝叶斯网络</a></li>
+
+<li><a href="http://blog.csdn.net/eastmount/article/details/40954667" target="_blank">* 使用Include布局+Fragment滑动切换屏幕</a></li>
+
+<li><a href="http://blog.csdn.net/jiangwei0910410003/article/details/40949475" target="_blank">* Andrdoid中对应用程序的行为拦截实现方式之----从Java层进行拦截</a></li>
+
+<li><a href="http://blog.csdn.net/chaofanwei/article/details/40982435" target="_blank">* 大数据时代之hadoop(六)：hadoop 生态圈（pig，hive，hbase，ZooKeeper，Sqoop）</a></li>
+
+<li><a href="http://blog.csdn.net/t12x3456/article/details/40837287" target="_blank">* Android 使用android-support-multidex解决Dex超出方法数的限制问题,让你的应用不再爆棚</a></li>
+</ul></div>
+<script type="text/javascript">
+    window.onload = function () {
+        if (document.domain != 'blog.csdn.net') {
+            document.domain = "csdn.net";
+        }
+        //这种给广告区域赋值的方式，对于有些JS广告不能完美的显示
+        //top.document.getElementById('ad_commend').innerHTML = document.getElementById('div1').innerHTML;
+
+        var h = document.body.offsetHeight + 2;
+        setTimeout(function () {
+            if (h > 800) h = document.getElementById('div1').offsetHeight + 4;
+            try { top.document.getElementById('ad_frm_2').style.height = h + 'px'; }
+            catch (err) { }
+        }, 100);
+    };
+    $(function() {
+        $("#div1 a").click(function() {
+            top._gaq.push(['_trackEvent', 'function', 'onclick', 'blog_articles_tuijianwenzhang']);
+        });
+    });
+</script>
+
+
+</body></html>

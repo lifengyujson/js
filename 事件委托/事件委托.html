@@ -1,0 +1,120 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>事件委托</title>
+<style>
+li { width:400px; border:1px solid #ccc;}
+</style>
+</head>
+
+<body>
+<input type="button" id="btn" value="添加" />
+<ul id="ul">
+  <li><p>aaaaaaaa</p></li>
+  <li><p>bbbbbbbb</p></li>
+  <li>cccccccc</li>
+</ul>
+
+<script>
+window.onload = function(){
+  var oUl = document.getElementById("ul");
+  var aLi = oUl.getElementsByTagName("li");
+  var oBtn = document.getElementById("btn");
+  var iNow = 4;
+
+  oUl.onmouseover = function(ev){
+    var ev = ev || window.event;
+    var target = ev.target || ev.srcElement;
+	target = eventNode(target, this);
+    if(target.nodeName.toLowerCase() == "li"){
+    //target.style.background = "red";
+   	my.ui.startMove(target, {'width': 1000});
+    }
+  }
+  
+  function eventNode(target, parent) {
+	while(target.nodeName.toLowerCase() != 'li') {
+		if(target == parent) break;
+		target = target.parentNode;
+	}
+	return target;
+  }
+  
+  oUl.onmouseout = function(ev){
+    var ev = ev || window.event;
+    var target = ev.target || ev.srcElement;
+	target = eventNode(target, this);
+    if(target.nodeName.toLowerCase() == "li"){
+   // target.style.background = "";
+   	my.ui.startMove(target, {'width': 400});
+    }
+  }
+  oBtn.onclick = function(){
+    iNow ++;
+    var oLi = document.createElement("li");
+    oLi.innerHTML = 1111 *iNow;
+    oUl.appendChild(oLi);
+  }
+}
+
+var my = {};
+
+my.tools = {};
+
+my.tools.getStyle = function (obj, attribute) {
+	if(obj.currentStyle) {
+		return obj.currentStyle[attribute];
+	} else {
+		return getComputedStyle(obj, false)[attribute];
+	}
+};
+
+
+my.ui = {};
+
+my.ui.startMove = function (obj, json, fnEnd) {
+	clearInterval(obj.timer);
+	obj.timer = setInterval(function () {
+		var bStop = true;
+		
+		for(var attr in json) {
+			var cur = 0;
+			
+			if(attr == 'opacity') {
+				cur = Math.round(parseFloat(my.tools.getStyle(obj, attr) * 100));
+			} else {
+				cur = parseInt(my.tools.getStyle(obj, attr));
+			}
+			
+			var speed = (json[attr] - cur) / 6;
+			speed = speed > 0 ? Math.ceil(speed) : Math.floor(speed);
+			
+			if(cur != json[attr]) {
+				bStop = false;
+			}
+			
+			if(attr == 'opacity') {
+				obj.style.filter = 'alpha(opacity:' + (cur + speed) + ')';
+				obj.style.opacity = (cur + speed) / 100;		
+			} else {
+				obj.style[attr] = cur + speed  + 'px';
+			}
+			
+			}
+		
+			if(bStop) {
+				clearInterval(obj.timer);
+				
+				if(fnEnd) {
+					fnEnd();
+				}
+			
+		}
+	}, 30);
+};
+
+
+</script>
+</body>
+</html>

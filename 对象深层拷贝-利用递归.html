@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+</head>
+
+<body>
+<script>
+//对象深层拷贝，利用递归
+
+var obj = { 
+	a : { b: 20},
+	a2 : 1
+}
+
+function deepCopy(obj) {
+	
+	if(typeof obj != 'object') {
+		return obj;
+	}
+	
+	var newObj = {};
+	
+	for(var i in obj) {
+		newObj[i] = deepCopy(obj[i]);
+	}
+	
+	return newObj;
+}
+
+
+var obj2 = deepCopy(obj);
+
+obj2.a.b = 30;
+obj2.a2 = 2;
+
+alert(obj.a.b);
+
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>绝对定位瀑布流</title>
+<style>
+* { margin:0; padding:0; }
+.container { width:1000px; margin:50px auto; position:relative; border-top:3px solid #3CF; } 
+.container img { position:absolute; }
+.loading { width:100%; height:40px; position:fixed; bottom:0; left:0; background:white url(loader.gif) no-repeat center center; display:none;}
+</style>
+<script src="jquery-1.9.1.min.js"></script>
+<script>
+$(function () {
+	var oContainer = $('.container'); //外层div
+	var iCells = 0; //列数
+	var iWidth = 200; //每列宽度
+	var iSpace = 10; //每列间隔
+	var iOuterWidth = iWidth + iSpace; //每列实际占位宽度
+	var sUrl = 'http://www.wookmark.com/api/json/popular?callback=?'; //jsonp请求地址
+	var arrT = []; //每列最后一个元素的top值
+	var arrL = []; //每列的left值
+	var iPage = 0; //远程请求的参数
+	var iBtn = true; //请求数据标识符
+	
+	//设置列数
+	function setCell() {
+		iCells = Math.floor($(window).width() / iOuterWidth);
+		if(iCells < 1) {
+			iCells = 1; //最小一列
+		}
+		
+		//设置外层div宽度
+		oContainer.css('width', iCells * iOuterWidth - 10);
+		
+	}
+	setCell();
+	
+	//页面加载后得到第一次数据
+	getData();
+	
+	//设置第一次加载数据时元素的left和top值
+	for(var i = 0; i < iCells; i++) {
+		arrT[i] = 10;
+		arrL[i] = iOuterWidth * i;
+	}
+	
+	
+	//得到高度最小的一列
+	function getMin() {
+		var v = arrT[0];
+		var _index = 0; //定义高度最小列的索引值
+		
+		//循环比较得到最小高度的列
+		for(var i = 1; i < arrT.length; i++) {
+			if(arrT[i] < v) {
+				v = arrT[i];
+				_index = i;
+			}
+		}
+		
+		return _index; //返回高度最小列的索引值
+	}
+	
+	function getData() {
+		if(!iBtn) { //上次请求数据未完成时跳出本次请求
+			return;
+		}
+		iBtn = false;
+		iPage++;
+		$.getJSON(sUrl, {page: iPage}, function (data) {
+			$('.loading').fadeIn('fast');
+			$(data).each(function (i, obj) {
+				var oImg = new Image();
+				oImg.src = obj.image;
+				
+				//得到图片的高
+				var iHeight = iWidth / obj.width * obj.height; 
+				
+				//得到高度最小的一列
+				var index = getMin(); 
+				
+				//设置图片的属性
+				$(oImg).css({
+					'width': iWidth,
+					'height': iHeight,
+					'top': arrT[index],
+					'left': arrL[index]
+				});
+				
+				//重新设置添加图片后的列高度
+				arrT[index] += iHeight + 10;
+				oContainer.append(oImg);
+			});
+			iBtn = true;
+			console.log(111);
+			setTimeout(function () {
+				$('.loading').fadeOut('fast');
+			}, 1000);
+		});
+	}
+	//设置数据的top和left值
+	
+	
+	$(window).on('scroll', function() {
+		var _index = getMin(); //得到最小高度的列
+		var iH = $(document).scrollTop() + $(window).innerHeight();
+		if(arrT[_index] < iH - $('.container').offset().top) { 
+			getData(); //当最小高度的列 底部显示时，请求数据
+		}
+	});
+	
+	$(window).on('resize', function () {
+		var nowCeils = iCells;
+		setCell();
+		if(iCells == nowCeils) {
+			return;  //变化后的窗口列数和之前一样时跳出函数
+		}
+		//清空数组 重新运动模块
+		arrT = []; 
+		arrL = [];
+		for(var i = 0; i < iCells; i++) {
+			arrT[i] = 10;
+			arrL[i] = iOuterWidth * i;
+		}
+		oContainer.find('img').each(function () { 
+			var _index = getMin();
+			$(this).stop(false, true).animate({
+				'top': arrT[_index],
+				'left': arrL[_index]
+			}, 1000);
+			arrT[_index] += $(this).height() + 10;
+		});
+	});
+});
+</script>
+</head>
+<body>
+<div class="container">
+</div>
+<div class="loading">
+</div>
+</body>
+</html>

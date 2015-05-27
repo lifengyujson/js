@@ -1,0 +1,176 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<style>
+* { margin:0; padding:0;}
+body { overflow:hidden;}
+div { width:100%; background:url(1.jpg) no-repeat center center;}
+ul { position:fixed; right:50px; top:100px; }
+ul a { display:block; width:10px; height:10px; background:#ccc; border-radius:5px; margin-bottom:10px; margin-left:2px;}
+ul a.active { background:white; border:2px solid #09F; border-radius:7px; margin-left:0;  }
+</style>
+<script>
+	window.onload = function () {
+		setTimeout(function () { document.body.scrollTop = document.documentElement.scrollTop = 0; }, 30); //页面刷新后scrollTop重置为0
+		//设置div高度等于可视区高度
+		var aDiv = document.getElementsByTagName('div');
+		for(var i = 0; i < aDiv.length; i++) {
+			aDiv[i].style.height = document.documentElement.clientHeight + 'px';
+		}
+		var oIco = document.getElementById('scroll_ico');
+		var aIco = oIco.getElementsByTagName('a');
+		
+		//滚动最大次数
+		var iMax = Math.ceil(document.body.offsetHeight / document.documentElement.clientHeight) - 1;
+		var iNum = 0; //初始值
+		var bFlag = true; //当前滚动未结束时的标识符
+		
+		for(var j = 0; j < (iMax + 1); j++) { //添加IAOt
+			var oA = document.createElement('a');
+			oA.href = 'javascript:void(0)';
+			if(j == 0)  oA.className = 'active';
+			oIco.appendChild(oA);	
+		}
+		//按钮垂直居中	
+		oIco.style.top = (document.documentElement.clientHeight - oIco.offsetHeight - 10) / 2 + 'px';
+		
+		function scrollFun (ev) {
+			var oEvent = ev || event;
+			if(oEvent.preventDefault) {    //禁止滚动条默认事件
+				oEvent.preventDefault(); //标准浏览器
+			} else {
+				oEvent.returnValue = false; //ie低版本
+			}
+			
+			if(oEvent.wheelDelta) { 
+				if(oEvent.wheelDelta >= 120) { //ie chrome oprea
+					if(bFlag) {
+						iNum--;
+						if(iNum < 0 ) { 
+							iNum = 0;
+							return; 
+						}
+					}
+				} else if(oEvent.wheelDelta <= -120) {
+					if(bFlag) {
+						iNum++;
+						if(iNum > iMax) { 
+							iNum = iMax; 
+							return;
+						}
+					}
+				}
+			} else {
+				if(oEvent.detail <= -3) {  //ff
+					if(bFlag) {
+						iNum--;
+						if(iNum < 0 ) { 
+							iNum = 0;
+							return; 
+						}
+					}
+				} else if(oEvent.detail >= 3) {
+					if(bFlag) {
+						iNum++;
+						if(iNum > iMax) { 
+							iNum = iMax; 
+							return;
+						}
+					}
+				}
+			}
+			goMove(); //scrollTop运动
+		}
+		
+		document.onkeydown = function (ev) { //键盘事件
+			var oEvent = ev || event;
+			if(oEvent.keyCode == 38) {
+				if(bFlag) {
+					iNum--;
+					if(iNum < 0 ) { 
+						iNum = 0;
+						return; 
+					}
+				}
+				goMove();
+			} else if (oEvent.keyCode == 40) {
+				if(bFlag) {
+					iNum++;	
+					if(iNum > iMax) { 
+						iNum = iMax; 
+						return;
+					}
+				}
+				goMove();
+			}
+		};
+		
+		function goMove() { 
+			if(!bFlag) { 
+				return;  //上次滚动未结束时跳出函数
+			}
+			bFlag = false;
+			
+			for(var i = 0; i < aIco.length; i++) {
+				aIco[i].className = '';
+			}
+			aIco[iNum].className = 'active'; //设置右侧ico的active
+			
+			clearInterval(timer);
+			var iTarget = document.documentElement.clientHeight * iNum;
+			var timer = setInterval(function () {
+				var scrollTop = document.body.scrollTop || document.documentElement.scrollTop; //获取scrollTop值
+				//设置运动值
+				var speed = (iTarget - scrollTop) / 4;
+				speed=speed>0?Math.ceil(speed):Math.floor(speed);
+				
+				document.body.scrollTop = document.documentElement.scrollTop = scrollTop + speed;
+				if(scrollTop == iTarget) { //到达目标值
+					bFlag = true;
+					clearInterval(timer);
+				}
+			}, 30);
+		}
+		
+		window.onresize = function () {
+		//按钮垂直居中	
+		oIco.style.top = (document.documentElement.clientHeight - oIco.offsetHeight - 10) / 2 + 'px'; 
+			//窗口变化时重新设置div高度
+			for(var i = 0; i < aDiv.length; i++) {
+				aDiv[i].style.height = document.documentElement.clientHeight + 'px';
+			}
+			//窗口变化时重新设置scrollTop值
+			var scrollTop = document.body.scrollTop || document.documentElement.scrollTop; //获取scrollTop值
+			document.body.scrollTop = document.documentElement.scrollTop = iNum * document.documentElement.clientHeight;
+		};
+		
+		//注册事件
+		if(document.addEventListener) {
+			document.addEventListener('DOMMouseScroll', scrollFun, false);  //ff
+		}
+		window.onmousewheel = document.onmousewheel=scrollFun; //ie chrome oprea
+		
+
+	};
+	
+	
+</script>
+</head>
+
+<body>
+<div>
+</div>
+<div style="background-image:url(2.jpg)">
+</div>
+<div style="background-image:url(3.jpg)">
+</div>
+<div style="background-image:url(4.jpg)">
+</div>
+<div style="background-image:url(5.jpg)">
+</div>
+<ul id="scroll_ico">
+</ul>
+</body>
+</html>

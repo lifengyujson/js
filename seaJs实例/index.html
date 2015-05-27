@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>sea</title>
+<style>
+* { margin:0; padding:0; }
+body { width:100%; height:100%; position:relative;}
+.zoom { position:absolute; left:0; top:30px; width:300px; height:300px; background:#abcdef; display:none;}
+.zoom_btn { position:absolute; right:0; bottom:0; width:20px; height:20px; background:blue; cursor:nwse-resize}
+.drag { position:absolute; right:0; top:0; width:100px; height:100px; background:#abcdef; }
+</style>
+<script src="js/jquery.js"></script>
+<script src="sea/sea.js"></script>
+<script>
+$(function () {
+	seajs.use('./js/drag.js', function (ex) {
+		ex.drag($('.drag'));
+	});
+	
+	$('input').click(function () {
+		$('.zoom').show();
+		seajs.use('./js/zoom.js', function (ex) {
+			ex.zoom($('.zoom'), $('.zoom_btn'));
+		});
+	});
+});
+
+</script>
+</head>
+
+<body>
+<input type="button" value="点击" />
+<div class="zoom">
+	<div class="zoom_btn">
+    </div>
+</div>
+
+<div class="drag">
+</div>
+
+</body>
+</html>
